@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a220d4fe-82f3-4da9-be53-f5e65140e172" name="Changes" comment="Creando Modelos">
+    <list default="true" id="a220d4fe-82f3-4da9-be53-f5e65140e172" name="Changes" comment="Panel de administracion:&#10; Usuarios creados&#10; Personajes creados&#10; Armas creadas">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Recu/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/Recu/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Recu/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/Recu/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -76,11 +74,20 @@
       <option name="project" value="LOCAL" />
       <updated>1746009215134</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Panel de administracion:&#10; Usuarios creados&#10; Personajes creados&#10; Armas creadas">
+      <option name="closed" value="true" />
+      <created>1746011540741</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1746011540741</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Creando Modelos" />
-    <option name="LAST_COMMIT_MESSAGE" value="Creando Modelos" />
+    <MESSAGE value="Panel de administracion:&#10; Usuarios creados&#10; Personajes creados&#10; Armas creadas" />
+    <option name="LAST_COMMIT_MESSAGE" value="Panel de administracion:&#10; Usuarios creados&#10; Personajes creados&#10; Armas creadas" />
   </component>
 </project>
