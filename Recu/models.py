@@ -7,13 +7,12 @@ from django.db.models import CharField
 
 class Usuario(AbstractUser):
     type = [
-        ('admin', 'Administradir'),
+        ('admin', 'Administrador'),
         ('player', 'Jugador')
     ]
     usertype = models.CharField(max_length=20, choices=type, default='player')
     def __str__(self):
-        return self.username, self.usertype
-
+        return self.username
 class Weapons(models.Model):
     name = models.CharField(max_length=20)
     dmg = models.DecimalField
@@ -21,7 +20,7 @@ class Weapons(models.Model):
     wep_rarity = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.name, self.dmg
+        return self.name
 
 class Player(models.Model):
     role = [
@@ -36,7 +35,7 @@ class Player(models.Model):
     weapon = models.ForeignKey(Weapons, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name, self.user
+        return self.name
 
 
 class Summoner(models.Model):
