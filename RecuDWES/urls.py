@@ -21,4 +21,6 @@ from Recu import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('createBoss/', views.New_Boss),
+    path('checkoutBoss/<int:id>', views.Boss_status),
+    path('showRecipes/<str:m_name>', views.Show_Recipes)
 ]
