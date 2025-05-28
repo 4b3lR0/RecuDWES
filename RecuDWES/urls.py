@@ -16,11 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework.authtoken.views import ObtainAuthToken
+
 from Recu import views
+from Recu.views import Show_Recipes, Register, del_Boss
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('createBoss/', views.New_Boss),
-    path('checkoutBoss/<int:id>', views.Boss_status),
-    path('showRecipes/<str:m_name>', views.Show_Recipes)
+    path('api-token-auth/', ObtainAuthToken.as_view(), name='login'),
+    path('register/', Register.as_view(), name='Register'),
+    path('delBoss/<int:id>', del_Boss.as_view(), name='Borrar Jefe'),
+    path('showRecipes/<str:m_name>/<int:page>', Show_Recipes.as_view(), name='Mostrar Recetas'),
+
+    path('createBoss/', views.New_Boss)
 ]
