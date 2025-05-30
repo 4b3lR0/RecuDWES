@@ -41,13 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Recu.apps.RecuConfig',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'drf_yasg',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
 }
 
 MIDDLEWARE = [

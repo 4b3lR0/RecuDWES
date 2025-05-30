@@ -15,11 +15,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.template.defaultfilters import title
 from django.urls import path
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import permission_classes
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework.permissions import AllowAny
 
 from Recu import views
 from Recu.views import Show_Recipes, Register, del_Boss
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="API Documentación",
+        default_version="v1",
+        description="Documentación de la API",
+    ),
+    public=True,
+    permission_classes=[AllowAny],
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,5 +44,8 @@ urlpatterns = [
     path('delBoss/<int:id>', del_Boss.as_view(), name='Borrar Jefe'),
     path('showRecipes/<str:m_name>/<int:page>', Show_Recipes.as_view(), name='Mostrar Recetas'),
 
-    path('createBoss/', views.New_Boss)
+    path('createBoss/', views.New_Boss),
+
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema_swagger_ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema_redoc'),
 ]

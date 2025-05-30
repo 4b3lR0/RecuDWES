@@ -19,8 +19,9 @@ import json
 #GETS
 @csrf_exempt
 class Boss_status(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, id):
-        permission_classes = [IsAuthenticated]
         boss = Boss.objects.filter(pk=id)
         data = {"id": boss.id, "nombre": boss.name, "estado": boss.status}
         return JsonResponse(data)
@@ -28,8 +29,9 @@ class Boss_status(APIView):
 
 
 class Show_Recipes(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, m_name, page):
-        permission_classes = [IsAuthenticated]
 
         if request.method == "GET":
             limite = int(request.GET.get("limite", 3))
@@ -146,12 +148,13 @@ class boss_beated(APIView):
 
 #DELETES
 class EsAdmin(BasePermission):
-    def has_permissions(self, request, view):
+    def has_permission(self, request, view):
         return request.user.usertype == 'admin'
 
 class del_Boss(APIView):
+    permission_classes = [EsAdmin]
+
     def delete(self, request, id):
-        permission_classes = [EsAdmin]
 
         boss = Boss.objects.get(pk=id)
         print(boss.name)
