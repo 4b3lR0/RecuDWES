@@ -6,6 +6,10 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 from django.core import serializers
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.views import APIView
+
 from Recu.models import Usuario,Player,Weapons,Boss,Summoner,Recipes, Materials, Biome, NPCs, Mobs
 
 import json
@@ -14,58 +18,71 @@ import json
 
 #GETS
 @csrf_exempt
-def Boss_status (request, id):
-    if request.method == "GET":
+class Boss_status(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id):
         boss = Boss.objects.filter(pk=id)
         data = {"id": boss.id, "nombre": boss.name, "estado": boss.status}
         return JsonResponse(data)
-    else :
-        return JsonResponse({"message":"Error: El método debe ser GET"})
 
 
 
-def Show_Recipes (request, m_name):
-    if request.method == "GET":
-        limite = int(request.GET.get("limite", 3))
-        pagina = int(request.GET.get("página", 1))
-        idMaterial = Materials.objects.get(material_name=m_name)
-        material = Materials.objects.get(pk=idMaterial.id)
-        s_recipes = (Recipes.objects.filter(pk=material.id)
-                   .select_related('id_s').all())
-        w_recipes = (Recipes.objects.filter(pk=material.id)
-                     .select_related('id_w').all())
+class Show_Recipes(APIView):
+    permission_classes = [IsAuthenticated]
 
-        recipes = list(chain(s_recipes, w_recipes))
+    def get(self, request, m_name, page):
 
+        if request.method == "GET":
+            limite = int(request.GET.get("limite", 3))
+            pagina = int(request.GET.get("página", page))
+            material = Materials.objects.get(material_name=m_name)
+            recipes = (Recipes.objects.filter(id_material=material)
+                       .select_related('id_s', 'id_w', 'id_material'))
 
-        paginator = Paginator(recipes, limite)
+            print(recipes)
 
-        try:
-            recipes_page = paginator.page(pagina)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            paginator = Paginator(recipes, limite)
 
-        data = serializers.serialize('json', recipes_page)
-        return JsonResponse({"recipes": json.loads(data), "total": paginator.count, "page": pagina, "pages": paginator.num_pages})
+            try:
+                recipes_page = paginator.page(pagina)
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=400)
 
-    else :
-        return JsonResponse({"message":"Error: El método debe ser GET"})
+            data = []
+            for recipe in recipes_page:
+                data.append(
+                    {
+                        "id" : recipe.id,
+                        "weapon" : recipe.id_w.name if recipe.id_w else None,
+                        "summoner" : recipe.id_s.name if recipe.id_s else None,
+                        "material" : recipe.id_material.material_name
+                    }
+                )
+
+            return JsonResponse({"recipes": data, "total": paginator.count, "page": pagina, "pages": paginator.num_pages})
+
+        else :
+            return JsonResponse({"message":"Error: El método debe ser GET"})
+
 
 
 #POSTS
-@csrf_exempt
-def Register (request):
-    if request.method == "POST":
+class Register (APIView):
+    def post(self, request):
         data = json.loads(request.body)
-        user = Usuario.objects.create(
-            username=data["username"],
-            password=data["password"],
-            email=data["email"],
-            usertype=data["usertype"]
-        )
-        return JsonResponse({"id": user.pk, "mensaje": "Usuario creado con exito"})
-    else :
-        return JsonResponse({"message":"Error: El método debe ser POST"})
+        if (data["usertype"] != "admin" and data["usertype"] != "player"):
+            return JsonResponse({"error" : "El usuario solo puede ser admin(Administrador) o player(Jugador)"})
+        else:
+            user = Usuario.objects.create_user(
+                username = data["username"],
+                password = data["password"],
+                email = data["email"],
+                usertype = data["usertype"]
+            )
+            return JsonResponse({"id": user.pk, "mensaje": "Usuario creado con exito"})
+
+
 
 @csrf_exempt
 @transaction.atomic
@@ -118,7 +135,8 @@ def New_Boss (request):
 
 #PUT/PATCH
 @csrf_exempt
-def boss_beated (request, id):
+class boss_beated(APIView):
+    def patch(request, id):
         if request.method == "PATCH":
             data = json.loads(request.body)
             boss = Boss.objects.get(pk=id)
@@ -129,11 +147,20 @@ def boss_beated (request, id):
 
 
 #DELETES
-@csrf_exempt
-def del_boss (request, id):
-    if request.method == "DELETE":
+class EsAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.usertype == 'admin'
+
+class del_Boss(APIView):
+    permission_classes = [EsAdmin]
+
+    def delete(self, request, id):
+
         boss = Boss.objects.get(pk=id)
+        print(boss.name)
         boss.delete()
         return JsonResponse({"mensaje": "Jefe eliminado"})
-    else :
-        return JsonResponse({"message":"Error: El método debe ser DELETE"})
+
+
+
+
